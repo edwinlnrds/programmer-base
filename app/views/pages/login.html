@@ -1,0 +1,27 @@
+{% extends 'templates/base.html' %}
+
+{% block body %}
+<div class="container-fluid my-5">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-md-6">
+            <form class="h-100" method="POST" action="{{ url_for('auth.login') }}">
+                <div class="mb-3">
+                    {{ form.username.label(class_='form-label') }}
+                    {{ form.username(class_='form-control') }}
+                    <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                </div>
+                <div class="mb-3">
+                    {{ form.password.label(class_='form-label') }}
+                    {{ form.password(class_='form-control') }}
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                    <label class="form-check-label" for="exampleCheck1">Remember me</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock body %}
