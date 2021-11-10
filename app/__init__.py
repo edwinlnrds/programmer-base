@@ -33,4 +33,7 @@ def create_app():
     from app.routes.auth import auth
     app.register_blueprint(auth, url_prefix='/auth')
 
+    from app.routes.forum import forum
+    app.register_blueprint(forum, url_prefix='/posts')
+
     return app
