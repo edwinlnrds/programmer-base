@@ -5,3 +5,5 @@ flask_login
 flask_session
 email_validator
 environs
+autopep8
+pymysql
