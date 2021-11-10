@@ -1,6 +1,7 @@
 from datetime import datetime
 from sqlalchemy import Column
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.types import Integer, String, DateTime, Text
 
 from app import db
@@ -8,7 +9,8 @@ from app import db
 
 class Post(db.Model):
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer)
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    user = relationship('User')
     title = Column(String(255), nullable=False)
     content = Column(Text, nullable=False)
     # title separated by dash, and id ex: this-is-title-1628349812219
@@ -19,7 +21,10 @@ class Post(db.Model):
     tag = Column(String(32), nullable=True)
     vote = Column(Integer, default=0)
     # has_voted = Column()
-    replies = relationship('Reply', backref='post', lazy=True)
+    replies = relationship('Reply')
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow,
                         onupdate=datetime.utcnow)
+
+    def get_created_at(self):
+        return self.created_at.strftime("%H:%m, %B %d %Y")
