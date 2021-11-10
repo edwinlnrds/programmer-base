@@ -1,0 +1,36 @@
+{% extends 'templates/base.html' %}
+
+{% block head %}
+  <title>Programmer Base - Forum</title>
+{% endblock head %}
+
+{% include 'components/navbar.html' %}
+
+{% block body %}  
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}" role="alert">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{% include 'components/alert.html' %}
+
+{% if user.is_authenticated %}
+  <h1>Hello, {{ user.username }}</h1>
+{% endif %}
+
+{% for post in posts  %}
+  <h3>{{ post.title }}</h3>
+  <p>{{ post.content }}</p>
+  <a href="{{ post.slug }}" class="btn btn-primary">View</a>
+  {% if current_user.id == post.user_id %}
+    <a href="{{ post.slug }}" class="btn btn-primary">Edit</a>
+  {% endif %}
+{% endfor %}
+
+
+{% endblock body %}

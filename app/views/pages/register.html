@@ -4,43 +4,27 @@
   <title>Register</title>
 {% endblock head %}
 
+{% include 'components/navbar.html' %}
+
 {% block body %}
-<main class="container">
-  <h1 class="mb-5">Sign up</h1>
-  {% if form.errors %}
-    {% for field_name, field_errors in form.errors|dictsort if field_errors %}
-    {% for error in field_errors %}
-    <div class="alert alert-danger" role="alert">
-      {{ form[field_name].label }}: {{ error }}
-    </div>
-    {% endfor %}
-    {% endfor %}
-  {% endif %}
-  <form action="{{ url_for('auth.register') }}" method="POST">
+<h1 class="mb-5">Sign up</h1>
+{% include 'components/form_errors.html' %}
+<form action="{{ url_for('auth.register') }}" method="POST">
+  {% for field in form %}
     <div class="mb-3">
-      {{ form.username.label(class_='form-label') }}
-      {{ form.username(class_='form-control') }}
-    </div>
-
-    <div class="mb-3">
-      {{ form.email.label(class_='form-label') }}
-      {{ form.email(class_='form-control') }}
-    </div>
-
-    <div class="mb-3">
-      {{ form.password.label(class_='form-label') }}
-      {{ form.password(class_='form-control') }}
-    </div>
-
-    <div class="mb-3">
-      {{ form.confirm_password.label(class_='form-label') }}
-      {{ form.confirm_password(class_='form-control') }}
-    </div>
-    {{ form.hidden_tag() }}
-    <div class="mb-3">
-      {{ form.submit(class_='btn btn-primary') }}
-    </div>
-  </form>
-</main>
+      {% if field.type == 'BooleanField' %}  
+        {{ field(class_='form-check-input') }}
+        {{ field.label(class_='form-check-label') }}
+      {% elif field.type == 'CSRFTokenField' %}
+        {{ field() }}
+      {% elif field.type == 'SubmitField' %}
+        {{ field(class_='btn btn-block btn-primary') }}
+      {% else %}  
+        {{ field.label(class_='form-label') }}
+        {{ field(class_='form-control') }}
+      {% endif %}  
+    </div>  
+  {% endfor %}
+</form>
 
 {% endblock body %}

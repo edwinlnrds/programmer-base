@@ -1,31 +1,54 @@
 {% extends 'templates/base.html' %}
 
 {% block head %}
-    <title>Login</title>
+<title>Login</title>
 {% endblock head %}
 
+{% include 'components/navbar.html' %}
+
 {% block body %}
+
+{% if form.errors %}
+  {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+    {% for error in field_errors %}
+      <div class="alert alert-danger" role="alert">
+        {{ form[field_name].label }}: {{ error }}
+      </div>
+    {% endfor %}
+  {% endfor %}
+{% endif %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for category,message in messages %}
+      <div class="alert alert-{{ category }}" role="alert">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 <div class="container-fluid my-5">
-    <div class="row">
-        <div class="col"></div>
-        <div class="col-md-6">
-            <form class="h-100" method="POST" action="{{ url_for('auth.login') }}">
-                <div class="mb-3">
-                    {{ form.username.label(class_='form-label') }}
-                    {{ form.username(class_='form-control') }}
-                    <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-                </div>
-                <div class="mb-3">
-                    {{ form.password.label(class_='form-label') }}
-                    {{ form.password(class_='form-control') }}
-                </div>
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1">Remember me</label>
-                </div>
-                <button type="submit" class="btn btn-primary">Login</button>
-            </form>
-        </div>
+  <div class="row">
+    <div class="col"></div>
+    <div class="col-md-6">
+      <form class="h-100" method="POST" action="{{ url_for('auth.login') }}">
+        {% for field in form %}
+          <div class="mb-3">
+            {% if field.type == 'BooleanField' %}  
+              {{ field(class_='form-check-input') }}
+              {{ field.label(class_='form-check-label') }}
+            {% elif field.type == 'CSRFTokenField' %}
+              {{ field() }}
+            {% elif field.type == 'SubmitField' %}
+              {{ field(class_='btn btn-block btn-primary') }}
+            {% else %}  
+              {{ field.label(class_='form-label') }}
+              {{ field(class_='form-control') }}
+            {% endif %}  
+          </div>  
+        {% endfor %}
+      </form>
     </div>
+  </div>
 </div>
 {% endblock body %}

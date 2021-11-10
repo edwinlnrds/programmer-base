@@ -1,0 +1,30 @@
+{% extends 'templates/base.html' %}
+{% include 'components/navbar.html' %}
+
+{% include 'components/alert.html' %}
+{% block body %}
+<form action="{{ url_for('auth.register') }}" method="POST">
+  {% for field in form %}
+    <div class="mb-3">
+      {% if field.type == 'BooleanField' %}  
+        {{ field(class_='form-check-input') }}
+        {{ field.label(class_='form-check-label') }}
+      {% elif field.type == 'CSRFTokenField' %}
+        {{ field() }}
+      {% elif field.type == 'SubmitField' %}
+        {{ field(class_='btn btn-block btn-primary') }}
+      {% else %}  
+        {{ field.label(class_='form-label') }}
+        {{ field(class_='form-control') }}
+      {% endif %}  
+    </div>  
+  {% endfor %}
+</form>
+{% endblock body %}
+
+{% block script %}
+<script src="//cdn.ckeditor.com/4.16.2/full/ckeditor.js"></script>
+<script defer>
+  CKEDITOR.replace('content')
+</script>
+{% endblock script %}

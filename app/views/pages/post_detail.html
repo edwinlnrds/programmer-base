@@ -1,0 +1,34 @@
+{% extends 'templates/base.html' %}
+{% include 'components/alert.html' %}
+
+{% block head %}
+  <title>{{ post.title }}</title>
+{% endblock head %}
+
+{% block body %}
+  <a href="{{ url_for('forum.index') }}">Back to Posts</a>
+  <h1>{{ post.title }}</h1>
+  <p>
+    <small>Posted by {{ post.user.username }}</small>
+    {% if current_user.id == post.user_id %}
+      <a href="{{ post.slug }}/edit">Edit</a>    
+    {% endif %}
+  </p>
+  <p>
+    {% if post.tag != None %}
+      <small>{{ post.tag }}</small>    
+    {% endif %}
+    <small>Posted at {{ post.get_created_at() }}</small>
+  </p>
+  <p>{{ post.content }}</p>
+  <h2>Replies</h2>
+  {% for reply in replies  %}
+    <div class="card mb-3">
+
+      <h6 class="card-title">{{ reply.user.username }}</h6>
+      <p>{{ reply.content }}</p>
+      <small>{{ reply.get_created_at() }}</small>
+
+    </div>
+  {% endfor %}
+{% endblock body %}
