@@ -1,7 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, BooleanField, SubmitField, StringField, EmailField
-from wtforms import validators
-import wtforms
+from wtforms import PasswordField, BooleanField, SubmitField, StringField, EmailField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo
 
 
@@ -25,8 +23,12 @@ class CreateAccountForm(FlaskForm):
                                      DataRequired(), EqualTo('password', message='Confirmation password must match password')])
     submit = SubmitField('Register')
 
+
 class PostForm(FlaskForm):
     title = StringField('Title', id='title', validators=[DataRequired()])
-    content = StringField('Content', id='content', validators=[DataRequired()])
+    content = TextAreaField('Content', id='content', validators=[DataRequired()])
+    tag = StringField('Tag', id='tag')
+    submit = SubmitField('Create Post')
 
-    
+class EditProfile(FlaskForm):
+    pass

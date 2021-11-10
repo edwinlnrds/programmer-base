@@ -4,7 +4,7 @@ from flask.helpers import flash, make_response, url_for
 from werkzeug.utils import redirect
 from flask_login import login_required, logout_user, current_user
 
-from app.auth.forms import LoginForm, CreateAccountForm
+from app.forms import LoginForm, CreateAccountForm
 from app.controllers.AuthController import AuthController
 
 auth = Blueprint('auth', __name__)

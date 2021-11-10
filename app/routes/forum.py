@@ -1,30 +1,88 @@
-from flask import Blueprint, render_template, request
-from flask_login import login_required
+from datetime import datetime
+from flask import Blueprint, render_template, request, make_response, abort, flash
+from flask.helpers import url_for
+from flask_login import login_required, current_user
+from werkzeug.utils import redirect
+
+from app.controllers.ForumController import ForumController
+from app.models.Post import Post
+from app.forms import PostForm
 
 forum = Blueprint('forum', __name__)
+forum_controller = ForumController()
+
 
 @forum.route('/', methods=['GET'])
 def index():
-    pass
+    posts = forum_controller.get_all()
+    view = render_template('pages/posts.html', user=current_user, posts=posts)
+    return make_response(view)
+
 
 @forum.route('/<string:slug>')
-def post_detail():
-    pass
+def post_detail(slug):
+    post = forum_controller.get_post(slug=slug)
+    if not post:
+        abort(404)
+    view = render_template('pages/post_detail.html',
+                           post=post, replies=post.replies)
+    return make_response(view)
+
 
 @login_required
-@forum.route('/create')
+@forum.route('/create', methods=['GET', 'POST'])
 def create_post():
-    pass
+    if not current_user.is_authenticated:
+        return redirect(url_for('auth.login'))
+
+    form = PostForm(request.form)
+
+    if request.method == 'POST' and form.validate_on_submit():
+        try:
+            forum_controller.create_post(request.form)
+            return redirect(url_for('forum.index'))
+        except Exception as e:
+            flash(f'{e}', 'danger')
+            return redirect(request.referrer)
+
+    view = render_template('pages/create_edit.html', form=form, action=url_for('forum.create_post'))
+    return make_response(view)
+
 
 @login_required
-@forum.route('/edit')
-def edit_post():
-    pass
+@forum.route('/<string:slug>/edit', methods=['GET', 'POST'])
+def edit_post(slug):
+    if not current_user.is_authenticated:
+        return redirect(url_for('auth.login'))
+
+    post = forum_controller.get_post(slug=slug)
+    if not post:
+        abort(404);
+
+    form = PostForm(obj=post)
+    form.submit.label.text = 'Save Changes'
+    if request.method == 'POST' and form.validate_on_submit():
+        try:
+            slug = forum_controller.edit_post(post, request.form)
+            return redirect(url_for('forum.post_detail', slug=slug))
+        except Exception as e:
+            flash(f'{e}', 'danger')
+            return redirect(request.referrer)
+
+    view = render_template('pages/create_edit.html', form=form, post=post, action=url_for('forum.edit_post', slug=post.slug))
+    return make_response(view)
+
 
 @login_required
-@forum.route('/delete/<int:id>')
-def delete_post():
-    pass
+@forum.route('/<string:slug>/delete', methods=['POST'])
+def delete_post(slug):
+    try:
+        forum_controller.delete_post(slug)
+        flash(f'Post deleted', 'success')
+        return redirect(url_for('forum.index'))
+    except Exception as e:
+        flash(f'{e}', 'danger')
+        return redirect(request.referrer)
 
 @forum.route('/reply')
 @login_required

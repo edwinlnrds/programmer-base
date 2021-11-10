@@ -4,6 +4,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.types import Integer, String, DateTime, Text
 
+import uuid
+
 from app import db
 
 
@@ -13,13 +15,9 @@ class Post(db.Model):
     user = relationship('User')
     title = Column(String(255), nullable=False)
     content = Column(Text, nullable=False)
-    # title separated by dash, and id ex: this-is-title-1628349812219
     slug = Column(Text, nullable=False)
-    # slug operations
-    # replace space on title with dash
-    # add uuidv1 and generate the hex version
     tag = Column(String(32), nullable=True)
-    vote = Column(Integer, default=0)
+    vote = Column(Integer, default=0, nullable=True)
     # has_voted = Column()
     replies = relationship('Reply')
     created_at = Column(DateTime, default=datetime.utcnow)
