@@ -18,6 +18,8 @@ def create_app():
     login_manager.init_app(app)
 
     from app.models.User import User
+    from app.models.Post import Post
+    from app.models.Reply import Reply
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -35,5 +37,18 @@ def create_app():
 
     from app.routes.forum import forum
     app.register_blueprint(forum, url_prefix='/posts')
+
+    
+    @app.errorhandler(404)
+    def not_found(error):
+        from flask import render_template
+        return render_template('pages/404.html', error=error)
+
+    @app.errorhandler(400)
+    def bad_request(error):
+        from flask import render_template
+        return render_template('pages/400.html', error=error)
+
+
 
     return app
