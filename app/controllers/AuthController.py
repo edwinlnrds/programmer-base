@@ -25,7 +25,7 @@ class AuthController:
         if user:  # check if username exists
             raise Exception('Username already used!')
 
-        user = user.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=email).first()
         if user:  # check if email exists
             raise Exception('Email already used!')
 
@@ -36,10 +36,10 @@ class AuthController:
         db.session.add(user)
         db.session.commit()
 
-    def authenticate(self, request):
-        username = request.form['username']
-        password = request.form['password']
-        remember = request.form['remember']
+    def authenticate(self, form):
+        username = form['username'] 
+        password = form['password']
+        # remember = form['remember']
 
         user = User.query.filter_by(username=username).first()
 
@@ -49,13 +49,14 @@ class AuthController:
         if not check_password_hash(user.password, password):
             raise Exception('Username or Password is invalid!')
 
-        login_user(user, remember=remember, duration=timedelta(days=15))
+        logged_in = login_user(user, duration=timedelta(days=15))
 
-        flash(f'Welcome {user.username}!')
-        session['username'] = user.username
-        session['name'] = user.name
-        session['logged_in'] = True
-        session.permanent = False
+        if logged_in:
+            flash(f'Welcome {user.username}!', 'success')
+            session['username'] = user.username
+            session['name'] = user.name
+            session['logged_in'] = True
+            session.permanent = False
 
     def update_password(self, request):
         password = request.form['password']
