@@ -16,7 +16,7 @@ class AuthController:
         email = request.form['email']
         username = request.form['username']
         password = request.form['password']
-        confirm_password = request['confirm_password']
+        confirm_password = request.form['confirm_password']
 
         if password != confirm_password: # Assert if both contains the same password
             raise Exception('Confirmation Password does not match Password')
@@ -66,5 +66,5 @@ class AuthController:
             raise Exception('Confirm password does not match with new password')
         
 
-    def update(self,user_id, request):
+    def edit_profile(self,user_id, request):
         pass
