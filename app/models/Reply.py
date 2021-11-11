@@ -19,4 +19,8 @@ class Reply(db.Model):
                         onupdate=datetime.utcnow)
 
     def get_created_at(self):
-        return self.created_at.strftime("%H:%m, %B %d %Y")
+        import pytz
+        import tzlocal
+        local_timezone = tzlocal.get_localzone()
+        local_time = self.created_at.replace(tzinfo=pytz.utc).astimezone(local_timezone)
+        return local_time.strftime("%H:%m, %B %d %Y")

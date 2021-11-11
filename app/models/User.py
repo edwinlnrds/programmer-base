@@ -1,6 +1,7 @@
 from datetime import datetime
 from flask_login import UserMixin
 from sqlalchemy import Column
+from sqlalchemy.orm import relationship
 from sqlalchemy.types import Integer, String, DateTime,Text
 
 from app import db
@@ -16,3 +17,7 @@ class User(UserMixin, db.Model):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow,
                         onupdate=datetime.utcnow)
+    posts = relationship('Post')
+
+    def get_created_at(self):
+        return self.created_at.strftime("%B %d %Y")
