@@ -44,3 +44,13 @@ class ReplyForm(FlaskForm):
     content = TextAreaField('Leave a comment here.',
                             id='content', validators=[DataRequired()])
     reply = SubmitField('Reply')
+
+
+class ChangePasswordForm(FlaskForm):
+    password = PasswordField('Password', id='password',
+                             validators=[DataRequired()], render_kw={'placeholder': 'Your secret password'})
+    new_password = PasswordField('Password', id='new_password',
+                             validators=[DataRequired()], render_kw={'placeholder': 'Your secret password'})
+    confirm_new_password = PasswordField('Confirm Password', id='confirm_new_password', validators=[
+                                     DataRequired(), EqualTo('new_password', message='Confirmation password must match password')], render_kw={'placeholder': 'Must match password'})
+    submit = SubmitField('Save Changes')

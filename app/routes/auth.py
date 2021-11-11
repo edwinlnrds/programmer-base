@@ -4,7 +4,7 @@ from flask.helpers import flash, make_response, url_for
 from werkzeug.utils import redirect
 from flask_login import login_required, logout_user, current_user
 
-from app.forms import LoginForm, CreateAccountForm, EditProfile
+from app.forms import LoginForm, CreateAccountForm, EditProfile, ChangePasswordForm
 from app.controllers.AuthController import AuthController
 
 auth = Blueprint('auth', __name__)
@@ -80,9 +80,9 @@ def profile(username=None):
 
 
 @login_required
-@auth.route('/update-password', methods=['GET', 'POST'])
-def update_password():
-    form = EditProfile()
+@auth.route('/change-password', methods=['GET', 'POST'])
+def change_password():
+    form = ChangePasswordForm()
     if request.method == 'POST' and form.validate_on_submit():
         try:
             auth_controller.update_password(request.form)
@@ -90,7 +90,7 @@ def update_password():
         except Exception as e:
             flash(f'{e}', 'danger')
 
-    view = render_template('update_password.html', form=form)
+    view = render_template('pages/change_password.html', form=form)
     return make_response(view)
 
 

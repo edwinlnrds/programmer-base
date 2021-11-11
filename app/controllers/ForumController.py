@@ -1,5 +1,5 @@
 from flask_login import current_user
-from flask import flash
+from sqlalchemy import desc
 
 from app import db
 from app.models.Post import Post
@@ -29,7 +29,7 @@ class ForumController:
             return Post.query.filter_by(id=id).first()
         
     def get_all(self):
-        return Post.query.all()
+        return Post.query.order_by(desc(Post.created_at)).all()
 
     def edit_post(self, post, form):
         title = form['title']

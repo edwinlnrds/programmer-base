@@ -71,7 +71,7 @@ class AuthController:
         if confirm_new_password != new_password:
             raise Exception('Confirm password does not match with new password')
         
-        user.password = new_password
+        user.password = generate_password_hash(new_password)
         db.session.commit()
 
         
