@@ -5,8 +5,7 @@ from flask_login import login_required, current_user
 from werkzeug.utils import redirect
 
 from app.controllers.ForumController import ForumController
-from app.models.Post import Post
-from app.forms import PostForm
+from app.forms import PostForm, ReplyForm
 
 forum = Blueprint('forum', __name__)
 forum_controller = ForumController()
@@ -22,10 +21,13 @@ def index():
 @forum.route('/<string:slug>')
 def post_detail(slug):
     post = forum_controller.get_post(slug=slug)
+    form = ReplyForm(slug=slug)
     if not post:
         abort(404)
     view = render_template('pages/post_detail.html',
-                           post=post, replies=post.replies)
+                           post=post, 
+                           replies=post.replies,
+                           form=form)
     return make_response(view)
 
 
@@ -45,7 +47,10 @@ def create_post():
             flash(f'{e}', 'danger')
             return redirect(request.referrer)
 
-    view = render_template('pages/create_edit.html', form=form, action=url_for('forum.create_post'))
+    view = render_template('pages/create_edit.html',
+                           form=form, 
+                           action=url_for('forum.create_post'),
+                           operation='Create')
     return make_response(view)
 
 
@@ -57,7 +62,7 @@ def edit_post(slug):
 
     post = forum_controller.get_post(slug=slug)
     if not post:
-        abort(404);
+        abort(404)
 
     form = PostForm(obj=post)
     form.submit.label.text = 'Save Changes'
@@ -69,7 +74,11 @@ def edit_post(slug):
             flash(f'{e}', 'danger')
             return redirect(request.referrer)
 
-    view = render_template('pages/create_edit.html', form=form, post=post, action=url_for('forum.edit_post', slug=post.slug))
+    view = render_template('pages/create_edit.html', form=form,
+                           post=post, 
+                           action=url_for('forum.edit_post', 
+                           slug=post.slug),
+                           operation='Edit')
     return make_response(view)
 
 
@@ -84,7 +93,38 @@ def delete_post(slug):
         flash(f'{e}', 'danger')
         return redirect(request.referrer)
 
-@forum.route('/reply')
+
 @login_required
-def reply_to_post():
-    pass
+@forum.route('/reply', methods=['POST'])
+def create_reply():
+    try:
+        forum_controller.reply_to_post(request.form)
+        flash('Reply success', 'success')
+        return redirect(url_for('forum.post_detail', slug=request.form['slug']))
+    except Exception as e:
+        flash(f'{e}', 'danger')
+        return redirect(request.referrer)
+
+
+@login_required
+@forum.route('/reply/edit', methods=['POST'])
+def edit_reply():
+    try:
+        forum_controller.edit_reply(request.form)
+        flash(f'Reply edited', 'success')
+    except Exception as e:
+        flash(f'{e}', 'danger')
+
+    return redirect(request.referrer)
+
+
+@login_required
+@forum.route('/reply/delete', methods=['POST'])
+def delete_reply():
+    try:
+        forum_controller.delete_reply(request.form)
+        flash(f'Reply deleted', 'success')
+    except Exception as e:
+        flash(f'{e}', 'danger')
+
+    return redirect(request.referrer)

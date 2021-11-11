@@ -3,6 +3,7 @@ from flask import flash
 
 from app import db
 from app.models.Post import Post
+from app.models.Reply import Reply
 from app.helpers import convert_to_slug
 
 class ForumController:
@@ -45,6 +46,36 @@ class ForumController:
         return post.slug
     
     def delete_post(self, slug):
-        post = Post.query.filter_by(slug=slug).first()
+        post = self.get_post(slug=slug)
+        replies = post.replies
+
+        for reply in replies:
+            db.session.delete(reply)
         db.session.delete(post)
+        db.session.commit()
+
+    def get_reply(self, id):
+        return Reply.query.filter_by(id=id).first()
+
+    def reply_to_post(self, form):
+        slug = form['slug']
+        post_id = self.get_post(slug).id
+        reply = Reply(
+            user_id=current_user.id,
+            post_id=post_id,
+            content=form['content'])
+
+        db.session.add(reply)
+        db.session.commit()
+    
+    def edit_reply(self, form):
+        id = form['id']
+
+        reply = self.get_reply(id)
+        reply.content = form['content']
+        db.session.commit()
+
+    def delete_reply(self, form):
+        reply = self.get_reply(form['id'])
+        db.session.delete(reply)
         db.session.commit()
