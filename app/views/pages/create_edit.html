@@ -1,8 +1,18 @@
 {% extends 'templates/base.html' %}
-{% include 'components/navbar.html' %}
+{% block head %}
+  <title>
+    {% if post != undefined %}
+      {{ post.title }} - {{ operation }}
+    {% else %}
+      {{ operation }} Post
+    {% endif %} 
+  </title>
+{% endblock head %}
 
-{% include 'components/alert.html' %}
 {% block body %}
+{% include 'components/alert.html' %}
+{% include 'components/form_errors.html' %}
+<h1 class="display-6 mb-4">{{ operation }} Post</h1>
 <form action="{{ action }}" method="POST">
   {% for field in form %}
     <div class="mb-3">
@@ -25,6 +35,6 @@
 {% block script %}
 <script src="//cdn.ckeditor.com/4.16.2/full/ckeditor.js"></script>
 <script defer>
-  // CKEDITOR.replace('content')
+  CKEDITOR.replace('content')
 </script>
 {% endblock script %}

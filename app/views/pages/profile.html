@@ -1,0 +1,75 @@
+{% extends 'templates/base.html' %}
+
+{% block head %}
+<title>{{ user.username }}</title>
+{% endblock head %}
+
+{% block body %}
+<div class="text-center mt-5">
+  <img id="avatar-preview" class="rounded center-block mb-3" src="{{ current_user.avatar_url }}" alt="profile preview">
+  <h1 class="display-6"><a href="{{ url_for('auth.profile', username=user.username) }}"
+      class="text-decoration-none">{{ user.username }}</a></h1>
+</div>
+
+<h1 class="display-6 ms-1 mt-5 mb-4">Posts</h1>
+{% for post in posts  %}
+<div class="card p-4 mb-3">
+  <div class="d-flex flex-wrap ms-3 mb-3">
+    <h3 class="card-title">
+      <a href="{{ post.slug }}" class="text-decoration-none">
+        {{ post.title }}
+      </a>
+    </h3>
+    {% if current_user.id == post.user.id %}
+    <div class="ms-auto">
+      <div class="btn-group">
+        <button class="btn" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+          <i data-feather="more-vertical"></i>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <li><a class="dropdown-item" href="{{ url_for('forum.edit_post', slug=post.slug)}}">Edit Post</a></li>
+          <li>
+            <form action="{{ url_for('forum.delete_post', slug=post.slug) }}" method="POST">
+              <button type="submit" class="dropdown-item">Delete Post</button>
+            </form>
+          </li>
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="d-flex">
+    <div class="ms-3">
+      <img class="profile-pic rounded" src="{{ post.user.avatar_url }}" alt="Profile picture">
+    </div>
+    <div class="d-flex flex-column"></div>
+    <div class="ms-3">
+      <div class="media-body ml-3">
+        <a href="{{ url_for('auth.profile',username=post.user.username) }}"
+          class="text-decoration-none">{{ post.user.username }}</a>
+        <div class="text-muted small">{{ post.get_created_at() }}
+          {% if post.tag != None  %}
+          {{ '·' }}
+          {% set tags = post.tag.split(',')  %}
+          {% for tag in tags %}
+          <span class="badge bg-secondary">{{ tag }}</span>
+          {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-body row">
+    <p> {{ post.content | safe }} </p>
+  </div>
+</div>
+
+{% endfor %}
+{% endblock body %}
+
+{% block script %}
+<script>
+
+</script>
+{% endblock script %}

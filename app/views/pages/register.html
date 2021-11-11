@@ -4,27 +4,35 @@
   <title>Register</title>
 {% endblock head %}
 
-{% include 'components/navbar.html' %}
-
 {% block body %}
-<h1 class="mb-5">Sign up</h1>
 {% include 'components/form_errors.html' %}
-<form action="{{ url_for('auth.register') }}" method="POST">
-  {% for field in form %}
-    <div class="mb-3">
-      {% if field.type == 'BooleanField' %}  
-        {{ field(class_='form-check-input') }}
-        {{ field.label(class_='form-check-label') }}
-      {% elif field.type == 'CSRFTokenField' %}
-        {{ field() }}
-      {% elif field.type == 'SubmitField' %}
-        {{ field(class_='btn btn-block btn-primary') }}
-      {% else %}  
-        {{ field.label(class_='form-label') }}
-        {{ field(class_='form-control') }}
-      {% endif %}  
-    </div>  
-  {% endfor %}
-</form>
-
+{% include 'components/alert.html' %}
+<div class="row my-5">
+  <div class="col d-sm-none d-md-block">
+    <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_gzl797gs.json"  background="transparent"  speed="1"  style="width: 400px; height: 400px;"  loop  autoplay></lottie-player>
+  </div>
+  <div class="col-md-6">
+    <h1 class="mb-5">Register</h1>
+    <form action="{{ url_for('auth.register') }}" method="POST">
+      {% for field in form %}
+        <div class="mb-3">
+          {% if field.type == 'BooleanField' %}  
+            {{ field(class_='form-check-input') }}
+            {{ field.label(class_='form-check-label') }}
+          {% elif field.type == 'CSRFTokenField' %}
+            {{ field() }}
+          {% elif field.type == 'SubmitField' %}
+            {{ field(class_='btn btn-block btn-primary') }}
+          {% else %}  
+            <div class="form-floating">
+              {{ field(class_='form-control') }}
+              {{ field.label() }}
+            </div>
+          {% endif %}  
+        </div>  
+      {% endfor %}
+    </form>    
+  </div>
+</div>
+<script src="{{ url_for('static', filename='lib/lottie-player.js') }}"></script>
 {% endblock body %}

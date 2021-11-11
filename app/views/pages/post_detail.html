@@ -1,34 +1,162 @@
 {% extends 'templates/base.html' %}
-{% include 'components/alert.html' %}
 
 {% block head %}
-  <title>{{ post.title }}</title>
+<title>{{ post.title }}</title>
 {% endblock head %}
 
 {% block body %}
-  <a href="{{ url_for('forum.index') }}">Back to Posts</a>
-  <h1>{{ post.title }}</h1>
-  <p>
-    <small>Posted by {{ post.user.username }}</small>
-    {% if current_user.id == post.user_id %}
-      <a href="{{ post.slug }}/edit">Edit</a>    
-    {% endif %}
-  </p>
-  <p>
-    {% if post.tag != None %}
-      <small>{{ post.tag }}</small>    
-    {% endif %}
-    <small>Posted at {{ post.get_created_at() }}</small>
-  </p>
-  <p>{{ post.content }}</p>
-  <h2>Replies</h2>
-  {% for reply in replies  %}
-    <div class="card mb-3">
-
-      <h6 class="card-title">{{ reply.user.username }}</h6>
-      <p>{{ reply.content }}</p>
-      <small>{{ reply.get_created_at() }}</small>
-
+{% include 'components/alert.html' %}
+<div class="card px-4 pt-4 pb-5">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item" aria-current="page">
+        <a href="{{ url_for('forum.index') }}">Posts</a>
+      </li>
+      <li class="breadcrumb-item" aria-current="page">{{ post.title }}</li>
+    </ol>
+  </nav>
+  <div class="d-flex justify-content-between mt-4">
+    <h1>{{ post.title }}</h1>
+    {% if current_user.id == post.user.id %}
+    <div class="ms-auto">
+      <div class="btn-group">
+        <button class="btn" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+          <i data-feather="more-vertical"></i>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <li><a class="dropdown-item" href="{{ post.slug }}/edit">Edit Post</a></li>
+          <li>
+            <form action="{{ post.slug }}/delete" method="post">
+              <input type="submit" class="dropdown-item" value="Delete">
+            </form>
+          </li>
+        </ul>
+      </div>
     </div>
-  {% endfor %}
+    {% endif %}
+  </div>
+  
+  <div class="d-flex flex-column mb-5">
+    <small>Posted {{ post.get_created_at() }}
+      {% if post.tag != None  %}
+      {{ '·' }}
+      {% set tags = post.tag.split(',')  %}
+      {% for tag in tags %}
+      <span class="badge bg-secondary">{{ tag }}</span>
+      {% endfor %}
+      {% endif %}
+    </small>
+  </div>
+  <div>
+    {{ post.content | safe }}
+  </div>
+  <h3 class="mt-5">Author</h3>
+  <div class="d-flex">
+    <img src="{{ post.user.avatar_url }}" alt="" class="rounded profile-pic">
+    <div class="d-flex flex-column ms-2">
+      <h6> <a href="{{ url_for('auth.profile', username=post.user.username) }}">{{ post.user.username }}</a></h6>
+      <small>Member since {{ post.user.get_created_at() }}</small>
+    </div>
+  </div>
+</div>
+<div class="card p-3 my-5">
+  <h4 class="card-title my-4">Reply to this post</h4>
+  <form action="{{ url_for('forum.create_reply') }}" method="post">
+    {% for field in form %}
+    {% if field.type == 'CSRFTokenField' %}
+    {{ field() }}
+    {% elif field.type == 'SubmitField' %}
+    {{ field(class_='btn btn-block btn-primary ms-auto') }}
+    {% else %}
+    <div class="form-floating">
+      {{ field(class_='form-control mb-4') }}
+      {{ field.label() }}
+    </div>
+    {% endif %}
+    {% endfor %}
+  </form>
+</div>
+{% for reply in replies  %}
+<div class="card p-3 mb-3">
+  <div class="d-flex">
+    <div class="d-flex">
+      <img src="{{ reply.user.avatar_url }}" alt="" class="rounded profile-pic">
+      <div class="d-flex flex-column ms-2">
+        <h6> <a href="{{ url_for('auth.profile', username=reply.user.username) }}">{{ reply.user.username }}</a></h6>
+
+        <p>{{ reply.content }}</p>
+      </div>
+    </div>
+    {% if current_user.id == reply.user_id %}
+    <div class="ms-auto">
+      <div class="btn-group">
+        <button class="btn" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+          <i data-feather="more-vertical"></i>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit-reply"
+              data-bs-content={{ reply.content }} data-bs-id="{{ reply.id }}">Edit Post</a></li>
+          <li>
+            <form action="{{ url_for('forum.delete_reply') }}" method="POST">
+              <input type="hidden" name="id" value="{{ reply.id }}">
+              <button type="submit" class="dropdown-item">Delete</button>
+            </form>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  <small>{{ reply.get_created_at() }}</small>
+</div>
+{% endfor %}
+
+
+<div class="modal" id="edit-reply" tabindex="-1">
+  <form action="{{ url_for('forum.edit_reply') }}" method="post">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Reply</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="id" id="id">
+          {% for field in form %}
+          {% if field.type == 'CSRFTokenField' %}
+          {{ field() }}
+          {% elif field.type == 'SubmitField' %}
+          {{ field(class_='invisible') }}
+          {% else %}
+          <div class="form-floating">
+            {{ field(class_='form-control mb-4') }}
+            {{ field.label() }}
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
 {% endblock body %}
+{% block script %}
+<script>
+  var editReplyModal = document.getElementById('edit-reply')
+  editReplyModal.addEventListener('show.bs.modal', function (event) {
+    // Button that triggered the modal
+    var button = event.relatedTarget
+    // Extract info from data-bs-* attributes
+    var content = button.getAttribute('data-bs-content')
+    var id = button.getAttribute('data-bs-id')
+    editReplyModal.querySelector('#content').textContent = content
+    editReplyModal.querySelector('#id').value = id
+  })
+</script>
+{% endblock script %}

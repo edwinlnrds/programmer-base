@@ -1,29 +1,66 @@
 {% extends 'templates/base.html' %}
 
 {% block head %}
-  <title>Programmer Base - Forum</title>
+<title>Programmer Base - Forum</title>
 {% endblock head %}
 
-{% include 'components/navbar.html' %}
-
 {% block body %}
-
+<h1 class="display-6 mb-4">Posts</h1>
 {% include 'components/alert.html' %}
-
 {% for post in posts  %}
-  <h3>{{ post.title }}</h3>
-  <p><small>Posted by {{ post.user.username }}</small></p>
-  <p>{{ post.content }}</p>
-  <a href="{{ post.slug }}" class="btn btn-primary">View</a>
-  {% if current_user.id == post.user_id %}
-    <a href="{{ post.slug }}/edit" class="btn btn-primary">Edit</a>
-    <form action="{{ post.slug }}/delete" method="post">
-      <input type="hidden" name="slug" value="{{ post.slug }}">
-      <button type="submit" class="btn btn-danger">Delete</button>
-    </form>
-    
-  {% endif %}
+<div class="card p-4 mb-3">
+  <div class="d-flex flex-wrap ms-3 mb-3">
+    <h3 class="card-title">
+      <a href="{{ post.slug }}" class="text-decoration-none">
+        {{ post.title }}
+      </a>
+    </h3>
+    {% if current_user.id == post.user.id %}
+    <div class="ms-auto">
+      <div class="btn-group">
+        <button class="btn" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+          <i data-feather="more-vertical"></i>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <li><a class="dropdown-item" href="{{ url_for('forum.edit_post', slug=post.slug)}}">Edit Post</a></li>
+          <li>
+            <form action="{{ url_for('forum.delete_post', slug=post.slug) }}" method="POST">
+              <button type="submit" class="dropdown-item">Delete Post</button>
+            </form>
+          </li>
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="d-flex">
+    <div class="ms-3">
+      <img class="profile-pic rounded" src="{{ post.user.avatar_url }}"
+        alt="Profile picture">
+    </div>
+    <div class="d-flex flex-column"></div>
+    <div class="ms-3">
+      <div class="media-body ml-3">
+        <a href="{{ url_for('auth.profile',username=post.user.username) }}"
+          class="text-decoration-none">{{ post.user.username }}</a>
+        <div class="text-muted small">{{ post.get_created_at() }}
+          {% if post.tag != None  %}
+          {{ '·' }}
+          {% set tags = post.tag.split(',')  %}
+          {% for tag in tags %}
+          <span class="badge bg-secondary">{{ tag }}</span>
+          {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-body row">
+    <p> {{ post.content | safe }} </p>
+  </div>
+</div>
+
+</div>
 {% endfor %}
-
-
 {% endblock body %}
