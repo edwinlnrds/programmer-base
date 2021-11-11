@@ -7,7 +7,15 @@ from app.models.Reply import Reply
 from app.helpers import convert_to_slug
 
 class ForumController:
+    """
+    Controller yang mengelola seluruh kegiatan dan aktivitas
+    yang berhubungan dengan forum termasuk membuat post, membalas post (reply),
+    ataupun menghapus, mengubah atau mengambil data post, reply dari database
+    """
     def create_post(self, form):
+        """
+        Fungsi untuk membuat post
+        """
         title = form['title']
         content = form['content']
         tag = form['tag']
@@ -32,6 +40,9 @@ class ForumController:
         return Post.query.order_by(desc(Post.created_at)).all()
 
     def edit_post(self, post, form):
+        """
+        Fungsi untuk meng-edit post
+        """
         title = form['title']
         content = form['content']
         tag = form['tag']
@@ -46,9 +57,14 @@ class ForumController:
         return post.slug
     
     def delete_post(self, slug):
+        """
+        Fungsi untuk menghapus post
+        """
         post = self.get_post(slug=slug)
         replies = post.replies
 
+        # sebelum menghapus post
+        # menghapus balasan terlebih dahulu
         for reply in replies:
             db.session.delete(reply)
         db.session.delete(post)
@@ -58,6 +74,9 @@ class ForumController:
         return Reply.query.filter_by(id=id).first()
 
     def reply_to_post(self, form):
+        """
+        Fungsi untuk membuat balasan ke sebuah post
+        """
         slug = form['slug']
         post_id = self.get_post(slug).id
         reply = Reply(
@@ -69,6 +88,9 @@ class ForumController:
         db.session.commit()
     
     def edit_reply(self, form):
+        """
+        Fungsi untuk mengedit balasan
+        """
         id = form['id']
 
         reply = self.get_reply(id)
@@ -76,6 +98,9 @@ class ForumController:
         db.session.commit()
 
     def delete_reply(self, form):
+        """
+        Fungsi untuk menghapus balasan
+        """
         reply = self.get_reply(form['id'])
         db.session.delete(reply)
         db.session.commit()

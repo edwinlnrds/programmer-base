@@ -7,6 +7,7 @@ from werkzeug.utils import redirect
 from app.controllers.ForumController import ForumController
 from app.forms import PostForm, ReplyForm
 
+# Blueprint merupakan komponen modular untuk menampung route
 forum = Blueprint('forum', __name__)
 forum_controller = ForumController()
 

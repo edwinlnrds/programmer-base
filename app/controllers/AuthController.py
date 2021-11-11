@@ -8,8 +8,15 @@ from app.models.User import User
 
 
 class AuthController:
-    """  """
+    """  
+    Controller yang mengelola otentikasi, informasi pengguna
+
+    """
+
     def check_username_and_email(self, username, email):
+        ''''
+        Fungsi untuk mengecek apakah usernam atau email sudah digunakan
+        '''
         user = self.get_user(username)
         if user:  # check if username exists
             raise Exception('Username already used!')
@@ -20,6 +27,9 @@ class AuthController:
 
 
     def create_user(self, form):
+        ''''
+        Fungsi untuk membuat user/akun baru
+        '''
         email = form['email']
         username = form['username']
         password = form['password']
@@ -39,6 +49,9 @@ class AuthController:
         db.session.commit()
 
     def authenticate(self, form):
+        '''
+        Fungsi untuk otentikasi/login
+        '''
         username = form['username'] 
         password = form['password']
         # remember = form['remember']
@@ -60,13 +73,17 @@ class AuthController:
             session.permanent = False
 
     def update_password(self, form):
+        '''
+        Fungsi untuk memperbaharui password
+        '''
         user = self.get_user(current_user.username)
         password = form['password']
         new_password = form['new_password']
         confirm_new_password = form['confirm_new_password']
 
+        # Mengecek apakah password sesuai
         if not check_password_hash(user.password, password):
-            raise Exception('Wrong Password')
+            raise Exception('Wrong Password') # Jika tidak maka beri alert password salah
 
         if confirm_new_password != new_password:
             raise Exception('Confirm password does not match with new password')
@@ -75,14 +92,12 @@ class AuthController:
         db.session.commit()
 
         
-    def get_user(self, username=None, email=None, id=None):        
+    def get_user(self, username=None, email=None, id=None):     
+        '''
+        Fungsi untuk mengambil data pengguna dari database
+        '''   
         if username:
-            return User.query.filter_by(username=username).first()
-        if email:
-            return User.query.filter_by(email=email).first()
-        if id:
-            return User.query.filter_by(id=id).first()
-            
+            return User.query.filter_by(username=username).first()          
     def edit_profile(self, form):
         username = form['username']
         name = form['name']

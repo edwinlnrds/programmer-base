@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, make_response, redirect, url_for
 from flask_login import current_user
 
+# Blueprint merupakan komponen modular untuk menampung route
 base = Blueprint('base', __name__)
 
 

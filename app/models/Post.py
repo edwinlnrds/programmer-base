@@ -1,4 +1,4 @@
-from datetime import datetime, date, time
+from datetime import datetime
 from sqlalchemy import Column
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
@@ -13,10 +13,12 @@ class Post(db.Model):
     user = relationship('User')
     title = Column(String(255), nullable=False)
     content = Column(Text, nullable=False)
+    # merupakan campuran dari judul dan uuid sebagai alamat untuk
+    # mengakses post, hal ini dilakukan untuk menghindari penggunaan id
+    # yang mudah ditebak
     slug = Column(Text, nullable=False)
     tag = Column(String(32), nullable=True)
     vote = Column(Integer, default=0, nullable=True)
-    # has_voted = Column()
     replies = relationship('Reply')
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow,
