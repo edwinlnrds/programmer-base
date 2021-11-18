@@ -8,6 +8,7 @@ from flask.helpers import url_for
 from flask_login import current_user, login_required
 from werkzeug.utils import redirect
 
+# Blueprint merupakan komponen modular untuk menampung route
 forum = Blueprint('forum', __name__)
 forum_controller = ForumController()
 

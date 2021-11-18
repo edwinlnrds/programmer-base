@@ -1,5 +1,4 @@
-import re
-from flask import Blueprint, render_template, request, session
+from flask import Blueprint, render_template, request
 from flask.helpers import flash, make_response, url_for
 from werkzeug.utils import redirect
 from flask_login import login_required, logout_user, current_user
@@ -7,6 +6,7 @@ from flask_login import login_required, logout_user, current_user
 from app.forms import LoginForm, CreateAccountForm, EditProfile, ChangePasswordForm
 from app.controllers.AuthController import AuthController
 
+# Blueprint merupakan komponen modular untuk menampung route
 auth = Blueprint('auth', __name__)
 auth_controller = AuthController()
 
@@ -14,6 +14,8 @@ auth_controller = AuthController()
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form)
+
+    # Jika methode POST dan form validasi saat submit
     if request.method == 'POST' and form.validate_on_submit():
         try:
             auth_controller.authenticate(request.form)
@@ -21,8 +23,9 @@ def login():
         except Exception as e:
             flash(f'{e}', 'danger')
             return redirect(request.referrer)
-
+    # Jika user sudah login
     if current_user.is_authenticated:
+        # arahkan ke forum
         return redirect(url_for('forum.index'))
     view = render_template('pages/login.html', form=form)
     return make_response(view)
@@ -31,6 +34,8 @@ def login():
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = CreateAccountForm(request.form)
+
+    # Jika methode POST dan form validasi saat submit
     if request.method == 'POST' and form.validate():
         try:
             auth_controller.create_user(request)
@@ -40,7 +45,9 @@ def register():
             flash(f'{e}', 'danger')
             return redirect(request.referrer)
 
+    # Jika user sudah login
     if current_user.is_authenticated:
+        # arahkan ke forum
         return redirect(url_for('forum.index'))
     view = render_template('pages/register.html', form=form)
     return make_response(view)
@@ -57,6 +64,7 @@ def my_profile():
 @auth.route('/edit-profile', methods=['GET', 'POST'])
 def edit_profile():
     form = EditProfile(obj=current_user)
+    # Jika methode POST dan form validasi saat submit
     if request.method == 'POST' and form.validate_on_submit():
         try:
             auth_controller.edit_profile(request.form)
@@ -83,6 +91,7 @@ def profile(username=None):
 @auth.route('/change-password', methods=['GET', 'POST'])
 def change_password():
     form = ChangePasswordForm()
+    # Jika methode POST dan form validasi saat submit
     if request.method == 'POST' and form.validate_on_submit():
         try:
             auth_controller.update_password(request.form)
