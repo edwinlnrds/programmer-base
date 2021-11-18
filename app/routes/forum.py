@@ -1,11 +1,12 @@
 from datetime import datetime
-from flask import Blueprint, render_template, request, make_response, abort, flash
-from flask.helpers import url_for
-from flask_login import login_required, current_user
-from werkzeug.utils import redirect
 
 from app.controllers.ForumController import ForumController
 from app.forms import PostForm, ReplyForm
+from flask import (Blueprint, abort, flash, make_response, render_template,
+                   request)
+from flask.helpers import url_for
+from flask_login import current_user, login_required
+from werkzeug.utils import redirect
 
 forum = Blueprint('forum', __name__)
 forum_controller = ForumController()
@@ -13,7 +14,8 @@ forum_controller = ForumController()
 
 @forum.route('/', methods=['GET'])
 def index():
-    posts = forum_controller.get_all()
+    page = request.args.get('page') if request.args.get('page') else 1
+    posts = forum_controller.get_post(page)
     view = render_template('pages/posts.html', user=current_user, posts=posts)
     return make_response(view)
 
@@ -25,7 +27,7 @@ def post_detail(slug):
     if not post:
         abort(404)
     view = render_template('pages/post_detail.html',
-                           post=post, 
+                           post=post,
                            replies=post.replies,
                            form=form)
     return make_response(view)
@@ -48,7 +50,7 @@ def create_post():
             return redirect(request.referrer)
 
     view = render_template('pages/create_edit.html',
-                           form=form, 
+                           form=form,
                            action=url_for('forum.create_post'),
                            operation='Create')
     return make_response(view)
@@ -75,9 +77,9 @@ def edit_post(slug):
             return redirect(request.referrer)
 
     view = render_template('pages/create_edit.html', form=form,
-                           post=post, 
-                           action=url_for('forum.edit_post', 
-                           slug=post.slug),
+                           post=post,
+                           action=url_for('forum.edit_post',
+                                          slug=post.slug),
                            operation='Edit')
     return make_response(view)
 

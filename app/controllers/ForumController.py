@@ -1,10 +1,10 @@
+from app import db
+from app.helpers import convert_to_slug
+from app.models.Post import Post
+from app.models.Reply import Reply
 from flask_login import current_user
 from sqlalchemy import desc
 
-from app import db
-from app.models.Post import Post
-from app.models.Reply import Reply
-from app.helpers import convert_to_slug
 
 class ForumController:
     def create_post(self, form):
@@ -27,9 +27,12 @@ class ForumController:
             return Post.query.filter_by(slug=slug).first()
         if id:
             return Post.query.filter_by(id=id).first()
-        
+
     def get_all(self):
         return Post.query.order_by(desc(Post.created_at)).all()
+
+    def get_post(self, page):
+        return Post.query.order_by(desc(Post.created_at)).paginate(page, 10)
 
     def edit_post(self, post, form):
         title = form['title']
@@ -40,11 +43,11 @@ class ForumController:
         post.content = content
         post.tag = tag
         post.slug = convert_to_slug(title)
-        
+
         db.session.commit()
 
         return post.slug
-    
+
     def delete_post(self, slug):
         post = self.get_post(slug=slug)
         replies = post.replies
@@ -67,7 +70,7 @@ class ForumController:
 
         db.session.add(reply)
         db.session.commit()
-    
+
     def edit_reply(self, form):
         id = form['id']
 
