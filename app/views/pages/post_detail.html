@@ -35,7 +35,7 @@
     </div>
     {% endif %}
   </div>
-  
+
   <div class="d-flex flex-column mb-5">
     <small>Posted {{ post.get_created_at() }}
       {% if post.tag != None  %}
@@ -54,7 +54,7 @@
   <div class="d-flex">
     <img src="{{ post.user.avatar_url }}" alt="" class="rounded profile-pic">
     <div class="d-flex flex-column ms-2">
-      <h6> <a href="{{ url_for('auth.profile', username=post.user.username) }}">{{ post.user.username }}</a></h6>
+      <h6> <a href="{{ url_for('profile.details', username=post.user.username) }}">{{ post.user.username }}</a></h6>
       <small>Member since {{ post.user.get_created_at() }}</small>
     </div>
   </div>
@@ -82,7 +82,7 @@
     <div class="d-flex">
       <img src="{{ reply.user.avatar_url }}" alt="" class="rounded profile-pic">
       <div class="d-flex flex-column ms-2">
-        <h6> <a href="{{ url_for('auth.profile', username=reply.user.username) }}">{{ reply.user.username }}</a></h6>
+        <h6> <a href="{{ url_for('profile.details', username=reply.user.username) }}">{{ reply.user.username }}</a></h6>
 
         <p>{{ reply.content }}</p>
       </div>

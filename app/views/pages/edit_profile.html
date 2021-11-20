@@ -1,38 +1,38 @@
 {% extends 'templates/base.html' %}
 
 {% block head %}
-  <title>{{ current_user.title }}</title>
+<title>{{ current_user.username }} - Edit</title>
 {% endblock  %}
 
 {% block body %}
-<h1 class="display-6 mb-5">My Profile</h1>
+<h1 class="display-6 mb-5">Edit Profile</h1>
 {% include 'components/alert.html' %}
 {% include 'components/form_errors.html' %}
 <div class="text-center">
   <img id="avatar-preview" class="rounded center-block mb-5" src="{{ current_user.avatar_url }}" alt="profile preview">
 </div>
-<form action="{{ url_for('auth.edit_profile') }}" method="POST">
+<form action="{{ url_for('profile.edit', username=current_user.username) }}" method="POST">
   {% for field in form %}
-    <div class="mb-3">
-      {% if field.type == 'BooleanField' %}  
-        {{ field(class_='form-check-input') }}
-        {{ field.label(class_='form-check-label') }}
-      {% elif field.type == 'CSRFTokenField' %}
-        {{ field() }}
-      {% elif field.type == 'SubmitField' %}
-        {{ field(class_='btn btn-block btn-primary') }}
-      {% else %}  
-        <div class="form-floating">
-          {{ field(class_='form-control') }}
-          {{ field.label() }}
-        </div>
-      {% endif %}  
-    </div>  
+  <div class="mb-3">
+    {% if field.type == 'BooleanField' %}
+    {{ field(class_='form-check-input') }}
+    {{ field.label(class_='form-check-label') }}
+    {% elif field.type == 'CSRFTokenField' %}
+    {{ field() }}
+    {% elif field.type == 'SubmitField' %}
+    {{ field(class_='btn btn-block btn-primary') }}
+    {% else %}
+    <div class="form-floating">
+      {{ field(class_='form-control') }}
+      {{ field.label() }}
+    </div>
+    {% endif %}
+  </div>
   {% endfor %}
 </form>
 
 {% endblock %}
 
 {% block script %}
-  <script defer src="{{ url_for('static', filename='js/edit-profile.js') }}"></script>
+<script defer src="{{ url_for('static', filename='js/edit-profile.js') }}"></script>
 {% endblock %}

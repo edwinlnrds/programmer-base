@@ -17,9 +17,9 @@ def create_app():
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
 
-    from app.models.User import User
     from app.models.Post import Post
     from app.models.Reply import Reply
+    from app.models.User import User
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -34,6 +34,9 @@ def create_app():
 
     from app.routes.auth import auth
     app.register_blueprint(auth, url_prefix='/auth')
+
+    from app.routes.profile import profile
+    app.register_blueprint(profile, url_prefix='/u')
 
     from app.routes.forum import forum
     app.register_blueprint(forum, url_prefix='/posts')

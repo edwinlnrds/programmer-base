@@ -6,13 +6,13 @@
 
 {% block body %}
 <div class="text-center mt-5">
-  <img id="avatar-preview" class="rounded center-block mb-3" src="{{ current_user.avatar_url }}" alt="profile preview">
-  <h1 class="display-6"><a href="{{ url_for('auth.profile', username=user.username) }}"
+  <img id="avatar-preview" class="rounded center-block mb-3" src="{{ user.avatar_url }}" alt="profile preview">
+  <h1 class="display-6"><a href="{{ url_for('profile.details', username=user.username) }}"
       class="text-decoration-none">{{ user.username }}</a></h1>
 </div>
 
 <h1 class="display-6 ms-1 mt-5 mb-4">Posts</h1>
-{% for post in posts  %}
+{% for post in user.posts  %}
 <div class="card p-4 mb-3">
   <div class="d-flex flex-wrap ms-3 mb-3">
     <h3 class="card-title">
@@ -46,7 +46,7 @@
     <div class="d-flex flex-column"></div>
     <div class="ms-3">
       <div class="media-body ml-3">
-        <a href="{{ url_for('auth.profile',username=post.user.username) }}"
+        <a href="{{ url_for('profile.details',username=post.user.username) }}"
           class="text-decoration-none">{{ post.user.username }}</a>
         <div class="text-muted small">{{ post.get_created_at() }}
           {% if post.tag != None  %}

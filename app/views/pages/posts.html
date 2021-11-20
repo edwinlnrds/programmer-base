@@ -41,7 +41,7 @@
     <div class="d-flex flex-column"></div>
     <div class="ms-3">
       <div class="media-body ml-3">
-        <a href="{{ url_for('auth.profile',username=post.user.username) }}"
+        <a href="{{ url_for('profile.details',username=post.user.username) }}"
           class="text-decoration-none">{{ post.user.username }}</a>
         <div class="text-muted small">{{ post.get_created_at() }}
           {% if post.tag != None  %}

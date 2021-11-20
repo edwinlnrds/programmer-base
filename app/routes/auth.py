@@ -1,10 +1,9 @@
+from app.controllers.AuthController import AuthController
+from app.forms import CreateAccountForm, LoginForm
 from flask import Blueprint, render_template, request
 from flask.helpers import flash, make_response, url_for
+from flask_login import current_user, login_required, logout_user
 from werkzeug.utils import redirect
-from flask_login import login_required, logout_user, current_user
-
-from app.forms import LoginForm, CreateAccountForm, EditProfile, ChangePasswordForm
-from app.controllers.AuthController import AuthController
 
 # Blueprint merupakan komponen modular untuk menampung route
 auth = Blueprint('auth', __name__)
@@ -51,67 +50,6 @@ def register():
         return redirect(url_for('forum.index'))
     view = render_template('pages/register.html', form=form)
     return make_response(view)
-
-
-@login_required
-@auth.route('/my-profile', methods=['GET'])
-def my_profile():
-    view = render_template('pages/profile.html', user=current_user)
-    return make_response(view)
-
-
-@login_required
-@auth.route('/edit-profile', methods=['GET', 'POST'])
-def edit_profile():
-    form = EditProfile(obj=current_user)
-    # Jika methode POST dan form validasi saat submit
-    if request.method == 'POST' and form.validate_on_submit():
-        try:
-            auth_controller.edit_profile(request.form)
-            flash('Profile edited', 'success')
-        except Exception as e:
-            flash(f'{e}', 'danger')
-    view = render_template('pages/edit_profile.html', form=form)
-    return make_response(view)
-
-
-@auth.route('/u/<string:username>', methods=['GET'])
-def profile(username=None):
-    try:
-        user = auth_controller.get_user(username)
-    except Exception as e:
-        flash(f'{e}', 'danger')
-        return redirect(url_for('forum.index'))
-
-    view = render_template('pages/profile.html', user=user, posts=user.posts)
-    return make_response(view)
-
-
-@login_required
-@auth.route('/change-password', methods=['GET', 'POST'])
-def change_password():
-    form = ChangePasswordForm()
-    # Jika methode POST dan form validasi saat submit
-    if request.method == 'POST' and form.validate_on_submit():
-        try:
-            auth_controller.update_password(request.form)
-            flash(f'Password updated', 'success')
-        except Exception as e:
-            flash(f'{e}', 'danger')
-
-    view = render_template('pages/change_password.html', form=form)
-    return make_response(view)
-
-
-@login_required
-@auth.route('/delete-account',  methods=['POST'])
-def delete_account():
-    try:
-        auth_controller.delete_account()
-        redirect('auth.logout')
-    except Exception as e:
-        flash(f'{e}', 'danger')
-    return redirect(url_for('base.index'))
 
 
 @login_required
