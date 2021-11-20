@@ -7,7 +7,7 @@
 {% block body %}
 <h1 class="display-6 mb-4">Posts</h1>
 {% include 'components/alert.html' %}
-{% for post in posts  %}
+{% for post in posts.items  %}
 <div class="card p-4 mb-3">
   <div class="d-flex flex-wrap ms-3 mb-3">
     <h3 class="card-title">
@@ -36,8 +36,7 @@
 
   <div class="d-flex">
     <div class="ms-3">
-      <img class="profile-pic rounded" src="{{ post.user.avatar_url }}"
-        alt="Profile picture">
+      <img class="profile-pic rounded" src="{{ post.user.avatar_url }}" alt="Profile picture">
     </div>
     <div class="d-flex flex-column"></div>
     <div class="ms-3">
@@ -62,4 +61,32 @@
 </div>
 
 {% endfor %}
+<nav class="w-100 d-inline-flex justify-content-center mt-5" aria-label="...">
+  <ul class="pagination">
+    {% if posts.has_prev %}
+    <li class="page-item">
+      <a class="page-link">Previous</a>
+    </li>
+    {% endif %}
+    {% for page in posts.iter_pages() %}
+    {% if page %}
+    {% if page != posts.page %}
+    <li class="page-item">
+      <a class="page-link" href="{{ url_for('forum.post', page=page) }}">{{ page }}</a>
+    </li>
+    {% else %}
+    <li class="page-item active" aria-current="page">
+      <a class="page-link" href="#">{{ page }}</a>
+    </li>
+    {% endif %}
+    {% endif %}
+    {% endfor %}
+
+    {% if posts.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="#">Next</a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
 {% endblock body %}
