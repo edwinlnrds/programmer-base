@@ -24,9 +24,10 @@
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
           <li><a class="dropdown-item" href="{{ url_for('forum.edit_post', slug=post.slug)}}">Edit Post</a></li>
           <li>
-            <form action="{{ url_for('forum.delete_post', slug=post.slug) }}" method="POST">
-              <button type="submit" class="dropdown-item">Delete Post</button>
-            </form>
+            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#delete-sheet"
+              data-bs-action="{{ url_for('forum.delete_post', slug=post.slug) }}">
+              Delete
+            </button>
           </li>
         </ul>
       </div>
@@ -89,4 +90,5 @@
     {% endif %}
   </ul>
 </nav>
+{% include 'components/delete_post_modal.html' %}
 {% endblock body %}
