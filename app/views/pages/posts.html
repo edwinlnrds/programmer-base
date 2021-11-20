@@ -72,7 +72,7 @@
     {% if page %}
     {% if page != posts.page %}
     <li class="page-item">
-      <a class="page-link" href="{{ url_for('forum.post', page=page) }}">{{ page }}</a>
+      <a class="page-link" href="{{ url_for('forum.index') }}?page={{ page }}">{{ page }}</a>
     </li>
     {% else %}
     <li class="page-item active" aria-current="page">
