@@ -1,10 +1,10 @@
 from datetime import datetime
+
+from app import db
 from sqlalchemy import Column
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.types import Integer, DateTime, Text
-
-from app import db
+from sqlalchemy.types import DateTime, Integer, Text
 
 
 class Reply(db.Model):
@@ -22,5 +22,6 @@ class Reply(db.Model):
         import pytz
         import tzlocal
         local_timezone = tzlocal.get_localzone()
-        local_time = self.created_at.replace(tzinfo=pytz.utc).astimezone(local_timezone)
-        return local_time.strftime("%H:%m, %B %d %Y")
+        local_time = self.created_at.replace(
+            tzinfo=pytz.utc).astimezone(local_timezone)
+        return local_time.strftime("%H:%M, %B %d %Y")
