@@ -41,7 +41,7 @@ class ForumController:
         return Post.query.order_by(desc(Post.created_at)).all()
 
     def get_posts(self, page):
-        return Post.query.order_by(desc(Post.created_at)).paginate(page, 10)
+        return Post.query.order_by(desc(Post.created_at)).paginate(page, 5)
 
     def edit_post(self, post, form):
         """
