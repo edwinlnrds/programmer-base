@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.exceptions import BadRequest, NotFound, Unauthorized
 
 db = SQLAlchemy()
 
@@ -41,17 +42,9 @@ def create_app():
     from app.routes.forum import forum
     app.register_blueprint(forum, url_prefix='/posts')
 
-    
-    @app.errorhandler(404)
-    def not_found(error):
-        from flask import render_template
-        return render_template('pages/404.html', error=error)
-
-    @app.errorhandler(400)
-    def bad_request(error):
-        from flask import render_template
-        return render_template('pages/400.html', error=error)
-
-
+    from app.error_handler import handle_error
+    app.register_error_handler(BadRequest, handle_error)
+    app.register_error_handler(Unauthorized, handle_error)
+    app.register_error_handler(NotFound, handle_error)
 
     return app
