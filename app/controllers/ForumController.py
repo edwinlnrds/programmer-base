@@ -12,6 +12,7 @@ class ForumController:
     yang berhubungan dengan forum termasuk membuat post, membalas post (reply),
     ataupun menghapus, mengubah atau mengambil data post, reply dari database
     """
+
     def create_post(self, form):
         """
         Fungsi untuk membuat post
@@ -39,7 +40,7 @@ class ForumController:
     def get_all(self):
         return Post.query.order_by(desc(Post.created_at)).all()
 
-    def get_post(self, page):
+    def get_posts(self, page):
         return Post.query.order_by(desc(Post.created_at)).paginate(page, 10)
 
     def edit_post(self, post, form):

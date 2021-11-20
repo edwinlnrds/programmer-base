@@ -16,7 +16,7 @@ forum_controller = ForumController()
 @forum.route('/', methods=['GET'])
 def index():
     page = request.args.get('page') if request.args.get('page') else 1
-    posts = forum_controller.get_post(page)
+    posts = forum_controller.get_posts(page)
     view = render_template('pages/posts.html', user=current_user, posts=posts)
     return make_response(view)
 
