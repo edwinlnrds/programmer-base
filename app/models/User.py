@@ -1,10 +1,11 @@
 from datetime import datetime
+
+from app import db
 from flask_login import UserMixin
 from sqlalchemy import Column
 from sqlalchemy.orm import relationship
-from sqlalchemy.types import Integer, String, DateTime,Text
-
-from app import db
+from sqlalchemy.types import DateTime, Integer, String, Text
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 class User(UserMixin, db.Model):
@@ -21,3 +22,11 @@ class User(UserMixin, db.Model):
 
     def get_created_at(self):
         return self.created_at.strftime("%B %d %Y")
+
+    @staticmethod
+    def get(username=None, email=None, id=None):
+        '''
+        Fungsi untuk mengambil data pengguna dari database
+        '''
+        if username:
+            return User.query.filter_by(username=username).first()
