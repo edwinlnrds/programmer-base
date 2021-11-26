@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+- phpMyAdmin XML Dump
+- version 5.1.1
+- https://www.phpmyadmin.net
+-
+- Host: 127.0.0.1
+- Generation Time: Nov 26, 2021 at 06:49 AM
+- Server version: 10.4.21-MariaDB
+- PHP Version: 8.0.12
+-->
+
+<pma_xml_export version="1.0" xmlns:pma="https://www.phpmyadmin.net/some_doc_url/">
+    <!--
+    - Structure schemas
+    -->
+    <pma:structure_schemas>
+        <pma:database name="programmer_base" collation="utf8mb4_general_ci" charset="utf8mb4">
+            <pma:table name="post">
+                CREATE TABLE `post` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `user_id` int(11) NOT NULL,
+                  `title` varchar(255) NOT NULL,
+                  `content` text NOT NULL,
+                  `slug` text NOT NULL,
+                  `tag` varchar(255) DEFAULT NULL,
+                  `vote` int(11) NOT NULL DEFAULT 0,
+                  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+                  `updated_at` datetime NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `user_id` (`user_id`),
+                  CONSTRAINT `post_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+                ) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4;
+            </pma:table>
+            <pma:table name="reply">
+                CREATE TABLE `reply` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `user_id` int(11) NOT NULL,
+                  `post_id` int(11) NOT NULL,
+                  `content` text NOT NULL,
+                  `vote` int(11) NOT NULL DEFAULT 0,
+                  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+                  `updated_at` datetime NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `reply_ibfk_1` (`post_id`),
+                  KEY `reply_ibfk_2` (`user_id`),
+                  CONSTRAINT `reply_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+                  CONSTRAINT `reply_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+                ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4;
+            </pma:table>
+            <pma:table name="user">
+                CREATE TABLE `user` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `avatar_url` text DEFAULT NULL,
+                  `name` varchar(255) DEFAULT NULL,
+                  `username` varchar(255) NOT NULL,
+                  `email` varchar(255) NOT NULL,
+                  `password` varchar(255) NOT NULL,
+                  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+                  `updated_at` datetime DEFAULT NULL,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+            </pma:table>
+        </pma:database>
+    </pma:structure_schemas>
+</pma_xml_export>
