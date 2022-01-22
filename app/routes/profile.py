@@ -27,7 +27,7 @@ def edit(username):
     if current_user.username != username:
         abort(401)  # Unauthorized
 
-    form = EditProfile(obj=current_user)
+    form = EditProfile(request.form, obj=current_user)
     # Jika methode POST dan form validasi saat submit
     if request.method == 'POST' and form.validate_on_submit():
         try:

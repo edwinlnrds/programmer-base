@@ -14,9 +14,9 @@ class AuthController:
     """
 
     def check_username_and_email(self, username, email):
-        ''''
-        Fungsi untuk mengecek apakah usernam atau email sudah digunakan
-        '''
+        """
+        Fungsi untuk mengecek apakah username atau email sudah digunakan
+        """
         user = User.get(username)
         if user:  # check if username exists
             raise Exception('Username already used!')
@@ -26,9 +26,9 @@ class AuthController:
             raise Exception('Email already used!')
 
     def create_user(self, form):
-        ''''
+        """
         Fungsi untuk membuat user/akun baru
-        '''
+        """
         email = form['email']
         username = form['username']
         password = form['password']
@@ -48,9 +48,9 @@ class AuthController:
         db.session.commit()
 
     def authenticate(self, form):
-        '''
+        """
         Fungsi untuk otentikasi/login
-        '''
+        """
         username = form['username']
         password = form['password']
 

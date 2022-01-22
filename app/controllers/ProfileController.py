@@ -9,9 +9,9 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 class ProfileController:
     def edit_profile(self, form):
-        username = form['username']
-        name = form['name']
-        email = form['email']
+        username = form.get('username', None)
+        name = form.get('name', None)
+        email = form.get('email', None)
 
         id = current_user.id
         if current_user.username != username:

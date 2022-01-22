@@ -1,8 +1,10 @@
-from environs import Env
 from datetime import timedelta
+
+from environs import Env
 
 env = Env()
 env.read_env()
+
 
 class Config(object):
     APP_ENV = 'development'
@@ -17,9 +19,8 @@ class Config(object):
     DB_PORT = env.str('DB_PORT', '3306')
     MYSQL_UNIX_SOCKET = 'TCP'
 
-
     SQLALCHEMY_TRACK_MODIFICATIONS = True
-    SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USERNAME}{DB_PASSWORD}:@{DB_HOST}/{DB_NAME}"
+    SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
 
     SECRET_KEY = env.str('SECRET_KEY', 'ultimate-secr3t-k3y')
 

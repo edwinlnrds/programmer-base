@@ -37,7 +37,7 @@ def register():
     # Jika methode POST dan form validasi saat submit
     if request.method == 'POST' and form.validate():
         try:
-            auth_controller.create_user(request)
+            auth_controller.create_user(request.form)
             flash('Register successful, please login.', 'success')
             return redirect(url_for('auth.login'))
         except Exception as e:
